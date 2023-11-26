@@ -20,9 +20,9 @@ impl Shot {
       timer: Timer::new(Duration::from_millis(50)),
     }
   }
-
-  pub fn update(&mut self, delta: f64) {
-    self.timer.tick(Duration::from_secs_f64(delta));
+  
+  pub fn update(&mut self, delta: Duration) {
+    self.timer.tick(delta);
     if self.timer.finished() && !self.exploded {
       if self.y > 0 {
         self.y -= 1;
@@ -32,12 +32,12 @@ impl Shot {
       self.timer.reset();
     }
   }
-
+  
   pub fn explode(&mut self) {
     self.exploded = true;
     self.timer = Timer::new(Duration::from_millis(250));
   }
-
+  
   pub fn dead(&self) -> bool {
     (self.exploded && self.timer.finished()) || (self.y == 0)
   }

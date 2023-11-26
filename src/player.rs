@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use crate::{NUM_COLS, NUM_ROWS, frame::{Drawable, Frame}, shot::Shot};
 
 pub struct Player {
@@ -14,19 +16,19 @@ impl Player {
       shots: Vec::new(),
     }
   }
-
+  
   pub fn move_left(&mut self) {
     if self.x > 0 {
       self.x -= 1;
     }
   }
-
+  
   pub fn move_right(&mut self) {
     if self.x < NUM_COLS - 1 {
       self.x += 1;
     }
   }
-
+  
   pub fn shoot(&mut self) -> bool {
     if self.shots.len() < 3 {
       self.shots.push(Shot::new(self.x, self.y - 1));
@@ -35,8 +37,8 @@ impl Player {
       false
     }
   }
-
-  pub fn update(&mut self, delta: f64) {
+  
+  pub fn update(&mut self, delta: Duration) {
     for shot in self.shots.iter_mut() {
       shot.update(delta);
     }
