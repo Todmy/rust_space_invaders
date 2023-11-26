@@ -1,4 +1,4 @@
-use std::{error::Error, time::Duration, sync::mpsc, thread};
+use std::{error::Error, time::{Duration, Instant}, sync::mpsc, thread};
 use rusty_audio::Audio;
 use space_invadors::{
     frame::{self, Drawable}, 
@@ -46,8 +46,11 @@ fn main() -> Result<(), Box<dyn Error>> {
     });
 
     let mut player = Player::new();
+    let mut instant = Instant::now();
     // Game loop
     'gameloop: loop {
+        let delta = instant.elapsed();
+        instant = Instant::now();
         // Per-frame init
         let mut curr_frame = frame::new_frame();
         // Handle input
@@ -66,10 +69,18 @@ fn main() -> Result<(), Box<dyn Error>> {
                         player.move_right();
                         audio.play("move");
                     }
+                    KeyCode::Char(' ') | KeyCode::Enter => {
+                        if player.shoot() {
+                            audio.play("pew");
+                        }
+                    }
                     _ => {}
                 }
             }
         }
+
+        // Update
+        player.update(delta.as_secs_f64());
 
         // Render
         player.draw(&mut curr_frame);
