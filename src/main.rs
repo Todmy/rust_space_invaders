@@ -84,12 +84,24 @@ fn main() -> Result<(), Box<dyn Error>> {
     if invaders.update(delta) {
       audio.play("move");
     }
+    if player.detect_hits(&mut invaders) {
+      audio.play("explode");
+    }
     
     // Render
     let drawbles: Vec<&dyn Drawable> = vec![&player, &invaders];
     drawbles.iter().for_each(|d| d.draw(&mut curr_frame));
     let _ = render_tx.send(curr_frame);
     thread::sleep(Duration::from_millis(1));
+
+    // Check for win/lose
+    if invaders.all_killed() {
+      audio.play("win");
+      break 'gameloop;
+    } else if invaders.reached_bottom() {
+      audio.play("lose");
+      break 'gameloop;
+    }
   }
   
   // cleanup
